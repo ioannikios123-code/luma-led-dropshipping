@@ -12,21 +12,25 @@ const Header = () => {
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#products" className="text-foreground/80 hover:text-primary transition-colors">
+          <a href="#products" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             Products
           </a>
-          <a href="#features" className="text-foreground/80 hover:text-primary transition-colors">
+          <a href="#features" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             Features
           </a>
-          <a href="#about" className="text-foreground/80 hover:text-primary transition-colors">
+          <a href="#stats" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             About
           </a>
-          <a href="#contact" className="text-foreground/80 hover:text-primary transition-colors">
+          <a href="#footer" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             Contact
           </a>
         </nav>
         
-        <Button variant="default" className="bg-gradient-primary border-0 shadow-glow">
+        <Button 
+          variant="default" 
+          className="bg-gradient-primary border-0 shadow-glow"
+          onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+        >
           Shop Now
         </Button>
       </div>

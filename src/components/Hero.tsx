@@ -30,11 +30,20 @@ const Hero = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button size="lg" className="bg-gradient-primary border-0 shadow-intense px-8 py-6 text-lg">
+          <Button 
+            size="lg" 
+            className="bg-gradient-primary border-0 shadow-intense px-8 py-6 text-lg"
+            onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+          >
             Explore Products
           </Button>
-          <Button size="lg" variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 px-8 py-6 text-lg">
-            Watch Demo
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="border-primary/50 text-primary hover:bg-primary/10 px-8 py-6 text-lg"
+            onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Learn More
           </Button>
         </div>
         
