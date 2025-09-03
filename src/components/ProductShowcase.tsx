@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import ledStripsImage from "@/assets/led-strips-product.jpg";
 import smartBulbImage from "@/assets/smart-led-bulb.jpg";
 import gamingSetupImage from "@/assets/gaming-led-setup.jpg";
@@ -35,6 +36,19 @@ const products = [
 ];
 
 const ProductShowcase = () => {
+  const { toast } = useToast();
+
+  const handleAddToCart = (productName: string, price: string) => {
+    toast({
+      title: "Added to Cart!",
+      description: `${productName} (${price}) has been added to your cart.`,
+    });
+    // Scroll to contact section for checkout
+    setTimeout(() => {
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    }, 1500);
+  };
+
   return (
     <section id="products" className="py-20 px-4">
       <div className="container mx-auto max-w-7xl">
@@ -80,7 +94,10 @@ const ProductShowcase = () => {
                     ))}
                   </ul>
                   
-                  <Button className="w-full bg-gradient-primary border-0 shadow-glow">
+                  <Button 
+                    className="w-full bg-gradient-primary border-0 shadow-glow"
+                    onClick={() => handleAddToCart(product.name, product.price)}
+                  >
                     Add to Cart
                   </Button>
                 </div>

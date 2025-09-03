@@ -40,7 +40,7 @@ const Footer = () => {
             </ul>
           </div>
           
-          <div>
+          <div id="contact">
             <h3 className="font-semibold mb-4">Contact Info</h3>
             <ul className="space-y-2 text-foreground/80">
               <li><span className="text-foreground/60">📧 support@lumalights.com</span></li>
