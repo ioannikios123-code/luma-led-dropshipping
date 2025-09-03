@@ -45,10 +45,20 @@ const Features = () => {
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Why Choose <span className="bg-gradient-primary bg-clip-text text-transparent">LumaLights</span>
+            Why Choose <button 
+              onClick={() => document.getElementById('stats')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-gradient-primary bg-clip-text text-transparent hover:scale-105 transition-transform cursor-pointer"
+            >
+              LumaLights
+            </button>
           </h2>
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto">
-            Experience the future of home lighting with our advanced LED technology
+            <button 
+              onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+              className="hover:text-primary transition-colors cursor-pointer"
+            >
+              Experience the future of home lighting with our advanced LED technology
+            </button>
           </p>
         </div>
         
