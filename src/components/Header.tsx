@@ -11,15 +11,21 @@ const Header = () => {
           </span>
         </div>
         
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6">
           <a href="#products" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             Products
+          </a>
+          <a href="#catalog" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
+            Catalog
+          </a>
+          <a href="#cart" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
+            Cart
           </a>
           <a href="#features" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             Features
           </a>
           <a href="#technical-specs" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
-            Tech Specs
+            Specs
           </a>
           <a href="#about" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             About
