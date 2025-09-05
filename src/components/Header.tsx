@@ -18,8 +18,14 @@ const Header = () => {
           <a href="#features" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             Features
           </a>
-          <a href="#stats" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
+          <a href="#technical-specs" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
+            Tech Specs
+          </a>
+          <a href="#about" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             About
+          </a>
+          <a href="#reviews" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
+            Reviews
           </a>
           <a href="#footer" className="text-foreground/80 hover:text-primary transition-colors scroll-smooth">
             Contact

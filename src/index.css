@@ -38,6 +38,7 @@ All colors MUST be HSL.
     --led-purple: 280 100% 65%;
     --led-pink: 320 100% 70%;
     --led-cyan: 180 100% 50%;
+    --led-yellow: 45 100% 60%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
