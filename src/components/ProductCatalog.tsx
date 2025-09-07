@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Star, Filter, Search, Heart, ShoppingCart } from "lucide-react";
+import { Star, Filter, Search, Heart, ShoppingCart, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ledStripsImage from "@/assets/led-strips-product.jpg";
 import smartBulbImage from "@/assets/smart-led-bulb.jpg";
@@ -111,18 +111,36 @@ const ProductCatalog = () => {
   const [sortBy, setSortBy] = useState("Featured");
   const [searchTerm, setSearchTerm] = useState("");
   const [wishlistItems, setWishlistItems] = useState<number[]>([]);
+  const [loadingItems, setLoadingItems] = useState<number[]>([]);
+  const [imageLoadErrors, setImageLoadErrors] = useState<number[]>([]);
 
-  const handleAddToCart = (product: any) => {
-    toast({
-      title: "Added to Cart!",
-      description: `${product.shortName} (${product.price}) has been added to your cart.`,
-    });
-    setTimeout(() => {
-      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-    }, 1500);
-  };
+  const handleAddToCart = useCallback(async (product: any) => {
+    setLoadingItems(prev => [...prev, product.id]);
+    
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      toast({
+        title: "Added to Cart!",
+        description: `${product.shortName} ($${product.price}) has been added to your cart.`,
+      });
+      
+      setTimeout(() => {
+        document.getElementById('cart')?.scrollIntoView({ behavior: 'smooth' });
+      }, 1000);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingItems(prev => prev.filter(id => id !== product.id));
+    }
+  }, [toast]);
 
-  const handleAddToWishlist = (productId: number, productName: string) => {
+  const handleAddToWishlist = useCallback((productId: number, productName: string) => {
     if (wishlistItems.includes(productId)) {
       setWishlistItems(prev => prev.filter(id => id !== productId));
       toast({
@@ -136,29 +154,33 @@ const ProductCatalog = () => {
         description: `${productName} has been saved to your wishlist.`,
       });
     }
-  };
+  }, [wishlistItems, toast]);
 
-  const filteredProducts = allProducts
-    .filter(product => {
-      const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
-      return matchesCategory && matchesSearch;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "Price: Low to High":
-          return a.price - b.price;
-        case "Price: High to Low":
-          return b.price - a.price;
-        case "Rating":
-          return b.rating - a.rating;
-        case "Newest":
-          return b.isNew ? 1 : -1;
-        default:
-          return b.isPopular ? 1 : -1;
-      }
-    });
+  const filteredProducts = useMemo(() => {
+    return allProducts
+      .filter(product => {
+        const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+        const matchesSearch = searchTerm === "" || 
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          product.category.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+      })
+      .sort((a, b) => {
+        switch (sortBy) {
+          case "Price: Low to High":
+            return a.price - b.price;
+          case "Price: High to Low":
+            return b.price - a.price;
+          case "Rating":
+            return b.rating - a.rating;
+          case "Newest":
+            return Number(b.isNew) - Number(a.isNew);
+          default:
+            return Number(b.isPopular) - Number(a.isPopular);
+        }
+      });
+  }, [selectedCategory, searchTerm, sortBy]);
 
   return (
     <section id="catalog" className="py-20 px-4 bg-background">
@@ -231,7 +253,20 @@ const ProductCatalog = () => {
                     src={product.image} 
                     alt={product.name}
                     className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                    onError={() => setImageLoadErrors(prev => [...prev, product.id])}
+                    style={{ 
+                      display: imageLoadErrors.includes(product.id) ? 'none' : 'block' 
+                    }}
                   />
+                  {imageLoadErrors.includes(product.id) && (
+                    <div className="w-full h-48 bg-card/30 flex items-center justify-center">
+                      <div className="text-center text-foreground/40">
+                        <div className="w-12 h-12 bg-foreground/10 rounded-lg mx-auto mb-2"></div>
+                        <p className="text-sm">Image unavailable</p>
+                      </div>
+                    </div>
+                  )}
                   <div className="absolute top-4 left-4">
                     <Badge className="bg-gradient-primary shadow-glow">
                       {product.badge}
@@ -291,9 +326,14 @@ const ProductCatalog = () => {
                     <Button 
                       className="flex-1 bg-gradient-primary border-0 shadow-glow"
                       onClick={() => handleAddToCart(product)}
+                      disabled={loadingItems.includes(product.id)}
                     >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      Add to Cart
+                      {loadingItems.includes(product.id) ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                      )}
+                      {loadingItems.includes(product.id) ? 'Adding...' : 'Add to Cart'}
                     </Button>
                     <Button 
                       variant="outline"

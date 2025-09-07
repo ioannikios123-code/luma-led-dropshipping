@@ -8,6 +8,8 @@ import Features from "@/components/Features";
 import Reviews from "@/components/Reviews";
 import CompanyInfo from "@/components/CompanyInfo";
 import TechnicalSpecs from "@/components/TechnicalSpecs";
+import CustomerService from "@/components/CustomerService";
+import FloatingChatWidget from "@/components/FloatingChatWidget";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -22,10 +24,12 @@ const Index = () => {
         <ShoppingCart />
         <Features />
         <TechnicalSpecs />
-        <CompanyInfo />
         <Reviews />
+        <CustomerService />
+        <CompanyInfo />
       </main>
       <Footer />
+      <FloatingChatWidget />
     </div>
   );
 };
