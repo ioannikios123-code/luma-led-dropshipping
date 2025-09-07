@@ -2,8 +2,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Truck } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Truck, MapPin, User, Mail, Phone } from "lucide-react";
 
 interface CartItem {
   id: number;
@@ -26,6 +29,19 @@ const ShoppingCartComponent = () => {
       quantity: 1
     }
   ]);
+  
+  const [checkoutForm, setCheckoutForm] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "United States",
+    phone: ""
+  });
+  
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const updateQuantity = (id: number, change: number) => {
     setCartItems(items => 
@@ -50,15 +66,40 @@ const ShoppingCartComponent = () => {
   const shipping = subtotal > 50 ? 0 : 9.99;
   const total = subtotal + shipping;
 
-  const handleCheckout = () => {
+  const handleCheckoutSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate required fields
+    const requiredFields = ['email', 'firstName', 'lastName', 'address', 'city', 'postalCode'];
+    const missingFields = requiredFields.filter(field => !checkoutForm[field as keyof typeof checkoutForm]);
+    
+    if (missingFields.length > 0) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // For now, show success message - real payment would need Supabase integration
     toast({
-      title: "Proceeding to Checkout",
-      description: "Redirecting to secure payment page...",
+      title: "Order Submitted!",
+      description: "Thank you for your order. You'll receive a confirmation email shortly.",
     });
-    // Scroll to contact for checkout process
-    setTimeout(() => {
-      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-    }, 1500);
+    
+    setIsCheckoutOpen(false);
+    setCartItems([]);
+    setCheckoutForm({
+      email: "",
+      firstName: "",
+      lastName: "",
+      address: "",
+      city: "",
+      postalCode: "",
+      country: "United States",
+      phone: ""
+    });
   };
 
   return (
@@ -183,14 +224,163 @@ const ShoppingCartComponent = () => {
                   </div>
                   
                   <div className="space-y-3 pt-4">
-                    <Button 
-                      className="w-full bg-gradient-primary border-0 shadow-glow"
-                      size="lg"
-                      onClick={handleCheckout}
-                    >
-                      <CreditCard className="w-4 h-4 mr-2" />
-                      Secure Checkout
-                    </Button>
+                    <Dialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          className="w-full bg-gradient-primary border-0 shadow-glow"
+                          size="lg"
+                        >
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Secure Checkout
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="text-2xl">Complete Your Order</DialogTitle>
+                        </DialogHeader>
+                        
+                        <form onSubmit={handleCheckoutSubmit} className="space-y-6">
+                          {/* Order Summary */}
+                          <div className="bg-card/50 p-4 rounded-lg border border-border/30">
+                            <h3 className="font-bold mb-3">Order Summary</h3>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span>Subtotal</span>
+                                <span>${subtotal.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between text-led-green">
+                                <span>You Save</span>
+                                <span>-${savings.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Shipping</span>
+                                <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                              </div>
+                              <div className="border-t border-border/30 pt-2">
+                                <div className="flex justify-between font-bold text-lg">
+                                  <span>Total</span>
+                                  <span className="text-primary">${total.toFixed(2)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Contact Information */}
+                          <div className="space-y-4">
+                            <h3 className="font-bold flex items-center gap-2">
+                              <User className="w-4 h-4" />
+                              Contact Information
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-4">
+                              <div>
+                                <Label htmlFor="email">Email *</Label>
+                                <Input
+                                  id="email"
+                                  type="email"
+                                  value={checkoutForm.email}
+                                  onChange={(e) => setCheckoutForm({...checkoutForm, email: e.target.value})}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="phone">Phone</Label>
+                                <Input
+                                  id="phone"
+                                  type="tel"
+                                  value={checkoutForm.phone}
+                                  onChange={(e) => setCheckoutForm({...checkoutForm, phone: e.target.value})}
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="firstName">First Name *</Label>
+                                <Input
+                                  id="firstName"
+                                  value={checkoutForm.firstName}
+                                  onChange={(e) => setCheckoutForm({...checkoutForm, firstName: e.target.value})}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="lastName">Last Name *</Label>
+                                <Input
+                                  id="lastName"
+                                  value={checkoutForm.lastName}
+                                  onChange={(e) => setCheckoutForm({...checkoutForm, lastName: e.target.value})}
+                                  required
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Shipping Information */}
+                          <div className="space-y-4">
+                            <h3 className="font-bold flex items-center gap-2">
+                              <MapPin className="w-4 h-4" />
+                              Shipping Address
+                            </h3>
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor="address">Address *</Label>
+                                <Input
+                                  id="address"
+                                  value={checkoutForm.address}
+                                  onChange={(e) => setCheckoutForm({...checkoutForm, address: e.target.value})}
+                                  required
+                                />
+                              </div>
+                              <div className="grid md:grid-cols-3 gap-4">
+                                <div>
+                                  <Label htmlFor="city">City *</Label>
+                                  <Input
+                                    id="city"
+                                    value={checkoutForm.city}
+                                    onChange={(e) => setCheckoutForm({...checkoutForm, city: e.target.value})}
+                                    required
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="postalCode">Postal Code *</Label>
+                                  <Input
+                                    id="postalCode"
+                                    value={checkoutForm.postalCode}
+                                    onChange={(e) => setCheckoutForm({...checkoutForm, postalCode: e.target.value})}
+                                    required
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="country">Country</Label>
+                                  <Input
+                                    id="country"
+                                    value={checkoutForm.country}
+                                    onChange={(e) => setCheckoutForm({...checkoutForm, country: e.target.value})}
+                                    disabled
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Submit Button */}
+                          <div className="flex gap-3 pt-4">
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              onClick={() => setIsCheckoutOpen(false)}
+                              className="flex-1"
+                            >
+                              Cancel
+                            </Button>
+                            <Button 
+                              type="submit"
+                              className="flex-1 bg-gradient-primary border-0 shadow-glow"
+                            >
+                              <CreditCard className="w-4 h-4 mr-2" />
+                              Place Order
+                            </Button>
+                          </div>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                     
                     <div className="text-center text-sm text-foreground/60">
                       <div className="flex items-center justify-center gap-1 mb-2">
