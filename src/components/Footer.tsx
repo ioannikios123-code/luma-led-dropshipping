@@ -52,7 +52,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-border mt-8 pt-8 text-center text-foreground/60">
-          <p>&copy; 2024 LumaLights. All rights reserved. | Free worldwide shipping on orders over $50</p>
+          <p>&copy; 2024 Your LED Business. All rights reserved. | Free worldwide shipping on orders over $50</p>
         </div>
       </div>
     </footer>
