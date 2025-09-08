@@ -7,7 +7,7 @@ const Header = () => {
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-primary rounded-full shadow-glow"></div>
           <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            LumaLights
+            Your LED Business
           </span>
         </div>
         
@@ -36,8 +36,8 @@ const Header = () => {
         </nav>
         
         <Button 
-          variant="default" 
-          className="bg-gradient-primary border-0 shadow-glow"
+          variant="gradient" 
+          className="shadow-glow hover:shadow-intense"
           onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
         >
           Shop Now

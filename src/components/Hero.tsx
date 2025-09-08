@@ -32,7 +32,8 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button 
             size="lg" 
-            className="bg-gradient-primary border-0 shadow-intense px-8 py-6 text-lg"
+            variant="gradient"
+            className="shadow-intense px-8 py-6 text-lg"
             onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
           >
             Explore Products
