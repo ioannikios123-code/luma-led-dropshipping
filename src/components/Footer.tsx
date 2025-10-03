@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-gradient-primary rounded-full shadow-glow"></div>
               <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                LumaLights
+                Luma Lights
               </span>
             </div>
             <p className="text-foreground/80 mb-4">
@@ -52,7 +52,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-border mt-8 pt-8 text-center text-foreground/60">
-          <p>&copy; 2024 Your LED Business. All rights reserved. | Free worldwide shipping on orders over $50</p>
+          <p>&copy; 2024 Luma Lights. All rights reserved. | Free worldwide shipping on orders over $50</p>
         </div>
       </div>
     </footer>

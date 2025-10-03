@@ -1,34 +1,54 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, X, Send, Phone, Mail } from "lucide-react";
+import { MessageCircle, X, Send, Phone, Mail, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface Message {
+  id: number;
+  text: string;
+  sender: "user" | "assistant";
+  time: string;
+}
 
 const FloatingChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "👋 Hi! I'm Sarah from LumaLights support. How can I help you today?",
-      sender: "support",
+      text: "👋 Hi! I'm your Luma Lights AI assistant. How can I help you today?",
+      sender: "assistant",
       time: "now"
     }
   ]);
   const [newMessage, setNewMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const quickReplies = [
-    "Product questions",
+    "Tell me about your products",
     "Installation help", 
-    "Order status",
-    "Returns & exchanges",
+    "How do I order?",
+    "Returns policy",
     "Technical support"
   ];
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || isLoading) return;
     
-    const userMessage = {
+    const userMessage: Message = {
       id: messages.length + 1,
       text: newMessage,
       sender: "user",
@@ -37,17 +57,56 @@ const FloatingChatWidget = () => {
     
     setMessages(prev => [...prev, userMessage]);
     setNewMessage("");
+    setIsLoading(true);
     
-    // Simulate support response
-    setTimeout(() => {
-      const supportResponse = {
+    try {
+      const conversationHistory = [...messages, userMessage].map(msg => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.text
+      }));
+
+      const { data, error } = await supabase.functions.invoke('chat-assistant', {
+        body: { messages: conversationHistory }
+      });
+
+      if (error) throw error;
+
+      const assistantResponse: Message = {
         id: messages.length + 2,
-        text: "Thanks for your message! I'll help you with that right away. For immediate assistance, you can also call us at 1-800-LED-HELP.",
-        sender: "support",
+        text: data.choices[0].message.content,
+        sender: "assistant",
         time: "now"
       };
-      setMessages(prev => [...prev, supportResponse]);
-    }, 1000);
+      
+      setMessages(prev => [...prev, assistantResponse]);
+    } catch (error: any) {
+      console.error('Error calling chat assistant:', error);
+      
+      let errorMessage = "I'm having trouble connecting right now. Please try again or contact us directly.";
+      
+      if (error.message?.includes("429")) {
+        errorMessage = "I'm receiving too many requests. Please wait a moment and try again.";
+      } else if (error.message?.includes("402")) {
+        errorMessage = "Service temporarily unavailable. Please contact support@lumalights.com or call 1-800-LUMA-LED.";
+      }
+      
+      toast({
+        title: "Connection Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
+      const errorResponse: Message = {
+        id: messages.length + 2,
+        text: errorMessage,
+        sender: "assistant",
+        time: "now"
+      };
+      
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -62,7 +121,7 @@ const FloatingChatWidget = () => {
         </Button>
         {!isOpen && (
           <Badge className="absolute -top-2 -left-2 bg-led-green text-white animate-pulse">
-            Online
+            AI Online
           </Badge>
         )}
       </div>
@@ -74,7 +133,7 @@ const FloatingChatWidget = () => {
             <CardTitle className="flex items-center justify-between text-lg">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-led-green rounded-full animate-pulse"></div>
-                Live Support
+                AI Assistant
               </div>
               <Button 
                 variant="ghost" 
@@ -85,7 +144,7 @@ const FloatingChatWidget = () => {
                 <X className="w-4 h-4" />
               </Button>
             </CardTitle>
-            <p className="text-sm text-foreground/60">Usually responds instantly</p>
+            <p className="text-sm text-foreground/60">Powered by AI • Instant responses</p>
           </CardHeader>
           
           <CardContent className="flex flex-col h-72">
@@ -107,10 +166,18 @@ const FloatingChatWidget = () => {
                   </div>
                 </div>
               ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-card border border-border/50 p-3 rounded-lg">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Quick Replies */}
-            {messages.length === 1 && (
+            {messages.length === 1 && !isLoading && (
               <div className="mb-3">
                 <p className="text-xs text-foreground/60 mb-2">Quick questions:</p>
                 <div className="flex flex-wrap gap-1">
@@ -136,14 +203,16 @@ const FloatingChatWidget = () => {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                disabled={isLoading}
                 className="flex-1 h-9"
               />
               <Button 
                 size="sm" 
                 onClick={handleSendMessage}
+                disabled={isLoading}
                 className="bg-gradient-primary border-0 h-9 w-9 p-0"
               >
-                <Send className="w-4 h-4" />
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </Button>
             </div>
 
@@ -153,7 +222,7 @@ const FloatingChatWidget = () => {
                 variant="ghost"
                 size="sm"
                 className="text-xs h-auto p-1 text-foreground/60"
-                onClick={() => window.open('tel:1-800-LED-HELP')}
+                onClick={() => window.open('tel:1-800-LUMA-LED')}
               >
                 <Phone className="w-3 h-3 mr-1" />
                 Call

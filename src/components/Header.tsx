@@ -7,7 +7,7 @@ const Header = () => {
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-primary rounded-full shadow-glow"></div>
           <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Your LED Business
+            Luma Lights
           </span>
         </div>
         
