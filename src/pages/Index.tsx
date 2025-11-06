@@ -1,16 +1,12 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import ProductShowcase from "@/components/ProductShowcase";
-import ProductCatalog from "@/components/ProductCatalog";
-import ProductDetails from "@/components/ProductDetails";
-import ShoppingCart from "@/components/ShoppingCart";
 import Features from "@/components/Features";
-import Reviews from "@/components/Reviews";
-import CompanyInfo from "@/components/CompanyInfo";
 import TechnicalSpecs from "@/components/TechnicalSpecs";
 import CustomerService from "@/components/CustomerService";
+import CompanyInfo from "@/components/CompanyInfo";
 import FloatingChatWidget from "@/components/FloatingChatWidget";
 import Footer from "@/components/Footer";
+import { ShopifyProductGrid } from "@/components/ShopifyProductGrid";
 
 const Index = () => {
   return (
@@ -18,13 +14,19 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
-        <ProductShowcase />
-        <ProductCatalog />
-        <ProductDetails />
-        <ShoppingCart />
+        <section id="products" className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Products</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Discover our premium collection of LED lighting solutions
+              </p>
+            </div>
+            <ShopifyProductGrid />
+          </div>
+        </section>
         <Features />
         <TechnicalSpecs />
-        <Reviews />
         <CustomerService />
         <CompanyInfo />
       </main>

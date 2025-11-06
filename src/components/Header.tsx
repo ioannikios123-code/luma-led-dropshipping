@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { CartDrawer } from "./CartDrawer";
 
 const Header = () => {
   return (
@@ -35,13 +36,16 @@ const Header = () => {
           </a>
         </nav>
         
-        <Button 
-          variant="gradient" 
-          className="shadow-glow hover:shadow-intense"
-          onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
-        >
-          Shop Now
-        </Button>
+        <div className="hidden md:flex items-center gap-3">
+          <CartDrawer />
+          <Button 
+            variant="gradient" 
+            className="shadow-glow hover:shadow-intense"
+            onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Shop Now
+          </Button>
+        </div>
       </div>
     </header>
   );
