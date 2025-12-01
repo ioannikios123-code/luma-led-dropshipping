@@ -31,12 +31,28 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Support</h3>
-            <ul className="space-y-2 text-foreground/80">
-              <li><button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-primary transition-colors text-left">Product Features</button></li>
-              <li><button onClick={() => document.getElementById('stats')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-primary transition-colors text-left">Why Choose Us</button></li>
-              <li><span className="text-foreground/60">2-Year Warranty Included</span></li>
-              <li><span className="text-foreground/60">30-Day Free Returns</span></li>
+            <h3 className="font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="/#products" className="text-muted-foreground hover:text-primary transition-colors">
+                  Products
+                </a>
+              </li>
+              <li>
+                <a href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="/shipping" className="text-muted-foreground hover:text-primary transition-colors">
+                  Shipping Info
+                </a>
+              </li>
+              <li>
+                <a href="/returns" className="text-muted-foreground hover:text-primary transition-colors">
+                  Returns & Refunds
+                </a>
+              </li>
             </ul>
           </div>
           

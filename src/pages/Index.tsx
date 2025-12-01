@@ -7,6 +7,8 @@ import CompanyInfo from "@/components/CompanyInfo";
 import FloatingChatWidget from "@/components/FloatingChatWidget";
 import Footer from "@/components/Footer";
 import { ShopifyProductGrid } from "@/components/ShopifyProductGrid";
+import { Testimonials } from "@/components/Testimonials";
+import { TrustBadges } from "@/components/TrustBadges";
 
 const Index = () => {
   return (
@@ -14,17 +16,19 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <TrustBadges />
         <section id="products" className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Products</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Transform Your Space Today</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Discover our premium collection of LED lighting solutions
+                From cozy bedroom vibes to epic gaming setups—discover LED lighting that matches your lifestyle
               </p>
             </div>
             <ShopifyProductGrid />
           </div>
         </section>
+        <Testimonials />
         <Features />
         <TechnicalSpecs />
         <CustomerService />
