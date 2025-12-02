@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { ShopifyProductGrid } from "@/components/ShopifyProductGrid";
 import { Testimonials } from "@/components/Testimonials";
 import { TrustBadges } from "@/components/TrustBadges";
+import { EmailSignupPopup } from "@/components/EmailSignupPopup";
 
 const Index = () => {
   return (
@@ -36,6 +37,7 @@ const Index = () => {
       </main>
       <Footer />
       <FloatingChatWidget />
+      <EmailSignupPopup />
     </div>
   );
 };
