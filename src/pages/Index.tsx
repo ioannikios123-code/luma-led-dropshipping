@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
@@ -10,10 +11,18 @@ import { ShopifyProductGrid } from "@/components/ShopifyProductGrid";
 import { Testimonials } from "@/components/Testimonials";
 import { TrustBadges } from "@/components/TrustBadges";
 import { EmailSignupPopup } from "@/components/EmailSignupPopup";
+import { PromoBanner } from "@/components/PromoBanner";
+import { trackUTMVisit } from "@/lib/utm";
 
 const Index = () => {
+  // Track UTM parameters on page load for ad attribution
+  useEffect(() => {
+    trackUTMVisit();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
+      <PromoBanner />
       <Header />
       <main>
         <Hero />
