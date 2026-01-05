@@ -67,6 +67,11 @@ export const adLinks = {
       medium: 'video',
       campaign,
     }),
+    landing: (campaign: string) => generateUTMLink('/tiktok', {
+      source: 'tiktok',
+      medium: 'video',
+      campaign,
+    }),
     product: (handle: string, campaign: string) => generateUTMLink(`/product/${handle}`, {
       source: 'tiktok',
       medium: 'video',
@@ -82,11 +87,25 @@ export const adLinks = {
       medium: 'social',
       campaign,
     }),
+    landing: (campaign: string) => generateUTMLink('/social', {
+      source: 'instagram',
+      medium: 'social',
+      campaign,
+    }),
     product: (handle: string, campaign: string) => generateUTMLink(`/product/${handle}`, {
       source: 'instagram',
       medium: 'social',
       campaign,
       content: handle,
+    }),
+  },
+
+  // Facebook Ads
+  facebookLanding: {
+    landing: (campaign: string) => generateUTMLink('/social', {
+      source: 'facebook',
+      medium: 'cpc',
+      campaign,
     }),
   },
 };
