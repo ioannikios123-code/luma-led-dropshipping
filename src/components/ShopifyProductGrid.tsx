@@ -4,9 +4,37 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { fetchProducts } from '@/lib/shopify';
 import { useCartStore, type ShopifyProduct, type CartItem } from '@/stores/cartStore';
-import { ShoppingCart, Loader2, Star, Truck, Zap } from 'lucide-react';
+import { ShoppingCart, Loader2, Star, Truck, Zap, Sparkles, Clock, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+
+// Enhanced product features/benefits based on product type
+const getProductFeatures = (title: string): string[] => {
+  const titleLower = title.toLowerCase();
+  
+  if (titleLower.includes('galaxy') || titleLower.includes('projector')) {
+    return ['360° Rotating Stars', 'Timer Function', 'Remote Included'];
+  }
+  if (titleLower.includes('gaming')) {
+    return ['Music Sync', 'Low Latency', '16M+ Colors'];
+  }
+  if (titleLower.includes('strip')) {
+    return ['Easy Peel & Stick', 'Cuttable Design', 'App Control'];
+  }
+  if (titleLower.includes('bulb')) {
+    return ['Voice Control Ready', 'Schedule Timer', 'Energy Saving'];
+  }
+  if (titleLower.includes('panel')) {
+    return ['Sound Reactive', 'Modular Design', 'Touch Controls'];
+  }
+  if (titleLower.includes('sunset') || titleLower.includes('lamp')) {
+    return ['Golden Hour Glow', 'USB Powered', 'Adjustable Angle'];
+  }
+  if (titleLower.includes('bundle') || titleLower.includes('kit')) {
+    return ['Complete Setup', 'Best Value', 'All-in-One'];
+  }
+  return ['Easy Setup', 'App Control', 'Long Lasting'];
+};
 
 export const ShopifyProductGrid = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -71,9 +99,10 @@ export const ShopifyProductGrid = () => {
         const image = product.node.images.edges[0]?.node;
         const price = product.node.priceRange.minVariantPrice;
         const priceNum = parseFloat(price.amount);
+        const features = getProductFeatures(product.node.title);
 
         return (
-          <Card key={product.node.id} className="group overflow-hidden hover:shadow-intense transition-all duration-300 border-border/50 hover:border-primary/30">
+          <Card key={product.node.id} className="group overflow-hidden hover:shadow-intense transition-all duration-300 border-border/50 hover:border-primary/30 flex flex-col">
             <Link to={`/product/${product.node.handle}`}>
               <div className="aspect-square overflow-hidden bg-secondary/20 relative">
                 {image ? (
@@ -91,10 +120,16 @@ export const ShopifyProductGrid = () => {
                 <Badge className="absolute top-3 left-3 bg-led-green text-white border-0">
                   <Zap className="w-3 h-3 mr-1" /> In Stock
                 </Badge>
+                {/* Save badge for higher priced items */}
+                {priceNum > 30 && (
+                  <Badge className="absolute top-3 right-3 bg-destructive text-white border-0">
+                    Save 20%
+                  </Badge>
+                )}
               </div>
             </Link>
             
-            <CardContent className="pt-4">
+            <CardContent className="pt-4 flex-1 flex flex-col">
               {/* Star rating */}
               <div className="flex items-center gap-1 mb-2">
                 {[...Array(5)].map((_, i) => (
@@ -112,7 +147,16 @@ export const ShopifyProductGrid = () => {
                 {product.node.description}
               </p>
               
-              <div className="flex items-baseline gap-2">
+              {/* Product Features */}
+              <div className="flex flex-wrap gap-1 mb-3">
+                {features.map((feature, idx) => (
+                  <span key={idx} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                    {feature}
+                  </span>
+                ))}
+              </div>
+              
+              <div className="flex items-baseline gap-2 mt-auto">
                 <p className="text-2xl font-bold text-primary">
                   ${priceNum.toFixed(2)}
                 </p>
@@ -124,9 +168,15 @@ export const ShopifyProductGrid = () => {
               </div>
               
               {/* Trust indicators */}
-              <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-                <Truck className="w-3 h-3" />
-                <span>Free Shipping</span>
+              <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Truck className="w-3 h-3" />
+                  <span>Free Ship</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Shield className="w-3 h-3" />
+                  <span>1yr Warranty</span>
+                </div>
               </div>
             </CardContent>
             
