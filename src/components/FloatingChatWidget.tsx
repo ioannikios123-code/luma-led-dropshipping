@@ -218,24 +218,20 @@ const FloatingChatWidget = () => {
 
             {/* Contact Options */}
             <div className="flex justify-center gap-4 mt-2 pt-2 border-t border-border/30">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs h-auto p-1 text-foreground/60"
-                onClick={() => window.open('tel:1-800-LUMA-LED')}
+              <a
+                href="tel:+18005862533"
+                className="inline-flex items-center text-xs p-1 text-foreground/60 hover:text-primary transition-colors"
               >
                 <Phone className="w-3 h-3 mr-1" />
                 Call
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs h-auto p-1 text-foreground/60"
-                onClick={() => window.open('mailto:support@lumalights.com')}
+              </a>
+              <a
+                href="mailto:support@lumalights.com"
+                className="inline-flex items-center text-xs p-1 text-foreground/60 hover:text-primary transition-colors"
               >
                 <Mail className="w-3 h-3 mr-1" />
                 Email
-              </Button>
+              </a>
             </div>
           </CardContent>
         </Card>
