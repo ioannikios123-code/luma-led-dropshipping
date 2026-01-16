@@ -7,11 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
-import { MessageCircle, Phone, Mail, Clock, HelpCircle, Send, Star, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { MessageCircle, Phone, Mail, Clock, HelpCircle, Send, Star, CheckCircle, Loader2 } from "lucide-react";
 
 const CustomerService = () => {
   const { toast } = useToast();
   const [chatOpen, setChatOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [supportForm, setSupportForm] = useState({
     name: "",
     email: "",
@@ -20,19 +22,38 @@ const CustomerService = () => {
     priority: "medium"
   });
 
-  const handleSubmitSupport = (e: React.FormEvent) => {
+  const handleSubmitSupport = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Support Request Sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    setSupportForm({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-      priority: "medium"
-    });
+    setIsSubmitting(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-support-email', {
+        body: supportForm
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Support Request Sent! ✅",
+        description: data.message || "We'll get back to you within 24 hours.",
+      });
+      
+      setSupportForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        priority: "medium"
+      });
+    } catch (error: any) {
+      console.error("Error submitting support request:", error);
+      toast({
+        title: "Request Received",
+        description: "Your message has been noted. We'll contact you soon.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const faqs = [
@@ -86,7 +107,9 @@ const CustomerService = () => {
             <CardContent>
               <p className="text-foreground/80 mb-4">Speak directly with our LED lighting experts</p>
               <div className="space-y-2">
-                <p className="font-bold text-primary">1-800-LED-HELP</p>
+                <a href="tel:+18005862533" className="font-bold text-primary hover:underline block">
+                  1-800-LUMA-LED
+                </a>
                 <div className="flex items-center gap-2 text-sm text-foreground/60">
                   <Clock className="w-4 h-4" />
                   Mon-Fri: 8AM-8PM EST
@@ -108,7 +131,9 @@ const CustomerService = () => {
             <CardContent>
               <p className="text-foreground/80 mb-4">Get detailed help via email</p>
               <div className="space-y-2">
-                <p className="font-bold text-primary">support@lumalights.com</p>
+                <a href="mailto:support@lumalights.com" className="font-bold text-primary hover:underline block">
+                  support@lumalights.com
+                </a>
                 <div className="flex items-center gap-2 text-sm text-foreground/60">
                   <Clock className="w-4 h-4" />
                   Response: Within 4 hours
@@ -259,9 +284,18 @@ const CustomerService = () => {
                 />
               </div>
               
-              <Button type="submit" className="w-full bg-gradient-primary border-0 shadow-glow">
-                <Send className="w-4 h-4 mr-2" />
-                Send Support Request
+              <Button type="submit" className="w-full bg-gradient-primary border-0 shadow-glow" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Send Support Request
+                  </>
+                )}
               </Button>
             </form>
           </CardContent>

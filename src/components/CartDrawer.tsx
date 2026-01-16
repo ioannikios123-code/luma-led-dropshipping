@@ -9,8 +9,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { toast } from "sonner";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,11 +31,12 @@ export const CartDrawer = () => {
       await createCheckout();
       const checkoutUrl = useCartStore.getState().checkoutUrl;
       if (checkoutUrl) {
-        window.open(checkoutUrl, '_blank');
-        setIsOpen(false);
+        // Use location.href to avoid popup blockers
+        window.location.href = checkoutUrl;
       }
     } catch (error) {
       console.error('Checkout failed:', error);
+      toast.error('Checkout failed. Please try again.');
     }
   };
 
@@ -148,11 +150,8 @@ export const CartDrawer = () => {
                     Processing...
                   </>
                 ) : (
-                  <>
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Proceed to Checkout
-                    </>
-                  )}
+                  "Proceed to Checkout"
+                )}
                 </Button>
               </div>
             </>
